@@ -35,5 +35,20 @@
       <ion-item> {{ keyword }} </ion-item>
       }
     </ion-list>
+    <br />
+    @if (selectedCourse.images) {
+    <strong>Images about this course</strong>
+    <ion-grid>
+      <ion-row>
+        @for (photo of selectedCourse.images; track $index) {
+        <ion-col size="6">
+          <ion-img [src]="photo"></ion-img>
+        </ion-col>
+
+        }
+      </ion-row>
+    </ion-grid>
+
+    }
   </div>
 </ion-content>

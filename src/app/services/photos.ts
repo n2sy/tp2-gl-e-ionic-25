@@ -9,11 +9,32 @@ export class Photos {
     let capturedPhoto = await Camera.getPhoto({
       source: CameraSource.Camera,
       quality: 90,
-      resultType : CameraResultType.DataUrl
-      
+      resultType: CameraResultType.DataUrl,
     });
-    
+
     console.log(capturedPhoto.dataUrl);
-    
+    return capturedPhoto.dataUrl;
   }
+
+  async selectionnerPhotos() {
+    let selectedPhotos = await Camera.pickImages({
+      quality: 90,
+      limit: 5,
+    });
+    console.log(selectedPhotos);
+
+    return selectedPhotos;
+  }
+  //1ere version
+  //   async selectionnerPhoto() {
+  //     let selectedPhoto = await Camera.getPhoto(
+  //         {
+  //             source : CameraSource.Photos,
+  //             quality : 90,
+  //             resultType : CameraResultType.DataUrl
+  //         }
+  //     )
+
+  //     return selectedPhoto.dataUrl;
+  //   }
 }

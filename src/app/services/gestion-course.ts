@@ -30,6 +30,11 @@ export class GestionCourse {
     },
   ];
 
+  addCourse(newCourse) {
+    newCourse.id = crypto.randomUUID();
+    this.allCourses.push(newCourse);
+  }
+
   getAllCourses() {
     return this.allCourses;
   }

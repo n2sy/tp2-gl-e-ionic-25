@@ -2,6 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActionSheetController, ToastController } from '@ionic/angular';
 import { Photos } from '../services/photos';
+import { GestionCourse } from '../services/gestion-course';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-course',
@@ -12,6 +14,8 @@ import { Photos } from '../services/photos';
 export class AddCoursePage implements OnInit {
   private toastCtrl = inject(ToastController);
   private photoSer = inject(Photos);
+  private router = inject(Router);
+  private courseSer = inject(GestionCourse);
   private actionSheetCtrl = inject(ActionSheetController);
   addForm = new FormGroup({
     title: new FormControl('title par défaut', Validators.required),
@@ -20,6 +24,8 @@ export class AddCoursePage implements OnInit {
     keywords: new FormControl([]),
   });
   inputKeywords: string = '';
+  temporaryImages: any[] = [];
+
   constructor() {}
 
   get Logo() {
@@ -33,15 +39,20 @@ export class AddCoursePage implements OnInit {
     if (this.Keywords.indexOf(this.inputKeywords) == -1) {
       this.Keywords.push(this.inputKeywords);
     } else {
-      this.presentToast('Mot-clé existant');
+      this.presentToast('Mot-clé existant', 'warning');
     }
     this.inputKeywords = '';
   }
 
   deleteKeyword(keywordToDelete) {
     let i = this.Keywords.indexOf(keywordToDelete);
-    this.Keywords.splice(i);
-    this.presentToast('Mot-clé supprimé');
+    this.Keywords.splice(i, 1);
+    this.presentToast('Mot-clé supprimé', 'primary');
+  }
+
+  deletePhoto(photoToDelete) {
+    let i = this.temporaryImages.indexOf(photoToDelete);
+    this.temporaryImages.splice(i, 1);
   }
 
   async presentActionSheet() {
@@ -51,13 +62,24 @@ export class AddCoursePage implements OnInit {
         {
           text: 'Prendre une photo',
           icon: 'camera',
-          handler : () => {
-            this.photoSer.takePicture();
-          }
+          handler: async () => {
+            try {
+              let selectedImage = await this.photoSer.takePicture();
+              this.temporaryImages.push(selectedImage);
+            } catch (err) {
+              this.presentToast("Vous n'avez pas pris de photo", 'danger');
+            }
+          },
         },
         {
           text: 'Choisir depuis la galerie',
           icon: 'image',
+          handler: async () => {
+            let tabImages = await this.photoSer.selectionnerPhotos();
+            let t = tabImages['photos'].map((element) => element.webPath);
+            this.temporaryImages = [...t];
+            console.log(this.temporaryImages);
+          },
         },
       ],
     });
@@ -65,19 +87,23 @@ export class AddCoursePage implements OnInit {
     await actionSheet.present();
   }
 
-  async presentToast(msg) {
+  async presentToast(msg, color) {
     const toast = await this.toastCtrl.create({
       message: msg,
       duration: 1500,
       position: 'top',
-      color: 'primary',
+      color: color,
     });
 
     await toast.present();
   }
 
   submitHandler() {
-    console.log(this.addForm.value);
+    this.courseSer.addCourse({
+      ...this.addForm.value,
+      images: [...this.temporaryImages], // new Array(this.temporaryImages)
+    });
+    this.router.navigateByUrl('/home');
   }
 
   ngOnInit() {}

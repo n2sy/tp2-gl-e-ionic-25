@@ -52,14 +52,56 @@
         <ion-card-title>Photos additionnelles</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-label>Aucune photo ajoutée</ion-label>
-        <ion-button
-          (click)="presentActionSheet()"
-          color="primary"
-          fill="outline"
-          expand="block"
-          >Ajouter une photo</ion-button
-        >
+        @if (!temporaryImages.length) {
+        <div class="no-photos">
+          <ion-label>Aucune photo ajoutée</ion-label>
+          <ion-button
+            (click)="presentActionSheet()"
+            color="primary"
+            fill="outline"
+            expand="block"
+            >Ajouter une photo</ion-button
+          >
+        </div>
+
+        } @else {
+        <div class="photo-container">
+          <ion-grid>
+            <ion-row>
+              @for (photo of temporaryImages; track $index) {
+              <ion-col size="6">
+                <ion-item>
+                  <img
+                    style="width: 100%; height: 120px; border-radius: 8px"
+                    [src]="photo"
+                  />
+                  <ion-button
+                    (click)="deletePhoto(photo)"
+                    class="delete-button"
+                    size="small"
+                    fill="clear"
+                  >
+                    <ion-icon
+                      slot="icon-only"
+                      color="danger"
+                      name="trash-outline"
+                    ></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ion-col>
+
+              }
+            </ion-row>
+          </ion-grid>
+          <ion-button
+            (click)="presentActionSheet()"
+            color="primary"
+            fill="outline"
+            expand="block"
+            >Ajouter une autre photo</ion-button
+          >
+        </div>
+        }
       </ion-card-content>
     </ion-card>
   </form>
