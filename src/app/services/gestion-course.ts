@@ -33,4 +33,13 @@ export class GestionCourse {
   getAllCourses() {
     return this.allCourses;
   }
+
+  getCourseById(selectedId) {
+    return this.allCourses.find((element) => element.id == selectedId);
+  }
+
+  deleteCourseById(selectedId) {
+    let i = this.allCourses.findIndex((element) => element.id == selectedId);
+    this.allCourses.splice(i, 1);
+  }
 }
