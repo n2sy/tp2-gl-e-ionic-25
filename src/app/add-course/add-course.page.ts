@@ -36,10 +36,14 @@ export class AddCoursePage implements OnInit {
   }
 
   addKeyword() {
-    if (this.Keywords.indexOf(this.inputKeywords) == -1) {
-      this.Keywords.push(this.inputKeywords);
+    if (this.inputKeywords.length == 1) {
+      this.presentToast('Mot-clé vide', 'dark');
     } else {
-      this.presentToast('Mot-clé existant', 'warning');
+      if (this.Keywords.indexOf(this.inputKeywords) == -1) {
+        this.Keywords.push(this.inputKeywords);
+      } else {
+        this.presentToast('Mot-clé existant', 'warning');
+      }
     }
     this.inputKeywords = '';
   }
@@ -103,6 +107,7 @@ export class AddCoursePage implements OnInit {
       ...this.addForm.value,
       images: [...this.temporaryImages], // new Array(this.temporaryImages)
     });
+    this.presentToast('Cours ajouté avec succès', 'success');
     this.router.navigateByUrl('/home');
   }
 

@@ -47,4 +47,10 @@ export class GestionCourse {
     let i = this.allCourses.findIndex((element) => element.id == selectedId);
     this.allCourses.splice(i, 1);
   }
+  deleteCourseByIdV2(selectedId) {
+    this.allCourses = this.allCourses.filter(
+      (element) => element.id != selectedId
+    );
+    console.log(this.allCourses);
+  }
 }
